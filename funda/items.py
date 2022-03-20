@@ -17,6 +17,6 @@ class FundaItem(scrapy.Item):
     toilets = scrapy.Field()
     property_type = scrapy.Field()
     energy_label = scrapy.Field()
-    city = scrapy.Field()
+    town = scrapy.Field()
     posting_date = scrapy.Field()
     sale_date = scrapy.Field()
