@@ -59,7 +59,7 @@ class FundaSpider(scrapy.Spider):
             yard_area = backyard_area
         else:
             yard_area = "unknown"
-        bedrooms = self.get_bedrooms(response)
+        rooms, bedrooms = self.get_rooms(response)
         bathrooms, toilets = self.get_bathrooms(response)
         energy_label = self.get_energy_label(response)
         posting_date = self.get_posting_date(response)
@@ -72,6 +72,7 @@ class FundaSpider(scrapy.Spider):
         new_item["plot_size"] = plot_size
         new_item["backyard_area"] = yard_area
         new_item["energy_label"] = energy_label
+        new_item["rooms"] = rooms
         new_item["bedrooms"] = bedrooms
         new_item["bathrooms"] = bathrooms
         new_item["toilets"] = toilets
@@ -194,16 +195,16 @@ class FundaSpider(scrapy.Spider):
             plot_size = "unknown"
         return living_area, plot_size
 
-
-    def get_bedrooms(self, response):
-        bedrooms = response.xpath(
-            "//span[contains(@title,'slaapkamer')]/following-sibling::span[1]/text()"
-        ).extract()
-        if len(bedrooms) > 0:
-            bedrooms = bedrooms[0]
+    def get_rooms(self, response):
+        rooms = self.get_entry(response, name="Aantal kamers")
+        if len(rooms) > 0:
+            number_of_rooms = re.findall(r"\d+", rooms)
+            if len(number_of_rooms) == 2:
+                rooms, bedrooms = number_of_rooms
         else:
+            rooms = "unknown"
             bedrooms = "unknown"
-        return bedrooms
+        return rooms, bedrooms
 
     def get_bathrooms(self, response):
         bathrooms = self.get_entry(response, name="Aantal badkamers")
