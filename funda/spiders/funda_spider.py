@@ -124,8 +124,20 @@ class FundaSpider(scrapy.Spider):
         entry = self.get_entry(response, "Aangeboden sinds")
         result = re.findall(r"\d+ [a-z]+ \d{4}", entry)
         if len(result) > 0:
-            maanden = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september",
-                       "oktober", "november", "december"]
+            maanden = [
+                "januari",
+                "februari",
+                "maart",
+                "april",
+                "mei",
+                "juni",
+                "juli",
+                "augustus",
+                "september",
+                "oktober",
+                "november",
+                "december",
+            ]
             result = result[0].split()
             if len(result) == 3:
                 day, month, year = result
@@ -197,13 +209,15 @@ class FundaSpider(scrapy.Spider):
 
     def get_rooms(self, response):
         rooms = self.get_entry(response, name="Aantal kamers")
+        bedrooms = "unknown"
         if len(rooms) > 0:
             number_of_rooms = re.findall(r"\d+", rooms)
             if len(number_of_rooms) == 2:
                 rooms, bedrooms = number_of_rooms
+            else:
+                rooms = number_of_rooms
         else:
             rooms = "unknown"
-            bedrooms = "unknown"
         return rooms, bedrooms
 
     def get_bathrooms(self, response):
