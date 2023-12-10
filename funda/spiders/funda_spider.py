@@ -4,7 +4,6 @@ import re
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from funda.items import FundaItem
-import logging
 
 
 class FundaSpider(scrapy.Spider):

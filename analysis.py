@@ -79,13 +79,13 @@ for key in result_dict.keys():
     backyard_area = get_backyard_area(entry)
     rooms = convert_field_to_float(entry, "rooms")
 
-    if (
-        # entry["town"] != "Helvoirt"
-        entry["town"] != "Sint-Michielsgestel"
-        # and entry["town"] != "Boxtel"
-        # and entry["town"] != "Haaren"
-    ):
-        continue
+    # if (
+    #     # entry["town"] != "Helvoirt"
+    #     entry["town"] != "Sint-Michielsgestel"
+    #     # and entry["town"] != "Boxtel"
+    #     # and entry["town"] != "Haaren"
+    # ):
+    #     continue
 
     if (
         price is not None
@@ -98,22 +98,24 @@ for key in result_dict.keys():
         features.append([year_built, living_area, backyard_area, energy_label, rooms])
         house_prices.append(price)
 
-print("Aantal huizen:")
-print(np.sum((np.array(features)[:, 1] > 120) * (np.array(features)[:, 2] > 300) * (np.array(house_prices) < 700000)))
-print()
+# print("Aantal huizen:")
+# print(np.sum((np.array(features)[:, 1] > 120) * (np.array(features)[:, 2] > 300) * (np.array(house_prices) < 700000)))
+# print()
 
-# y = np.array(house_prices)
-# X = np.array(features)
-#
-# reg = LinearRegression().fit(X, y)
-# # year_built, living_area, backyard_area, energy_label,
-# x = np.array([[1984, 140, 368, 4, 4]])  # Helvoirt
-# x0 = np.array([[2012, 160, 320, 4, 3]])  # De Goudplevier 14
-# x1 = np.array([[1975, 177, 320, 4, 4]])  # Sint Jorisstraat 29
+y = np.array(house_prices)
+X = np.array(features)
+
+reg = LinearRegression().fit(X, y)
+# year_built, living_area, backyard_area (= plot_size), energy_label, rooms
+# energy_labels = ["A++++", "A+++", "A++", "A+", "A", "B", "C", "D", "E", "F", "G"]
+x = np.array([[1984, 140, 368, 4, 4]])  # Helvoirt
+x = np.array([[2012, 160, 320, 4, 3]])  # De Goudplevier 14
+x = np.array([[1975, 177, 320, 4, 4]])  # Sint Jorisstraat 29
+x = np.array([[1988, 163, 499, 4, 6]])  # Krommeweg 10
 # y_pred = reg.predict(np.concatenate((x0, x1)))
-# print(y_pred.astype(int))
-#
-#
+y_pred = reg.predict(x)
+print(y_pred.astype(int))
+
 # # Creating figure
 # fig = plt.figure(figsize=(10, 7))
 # ax = plt.axes(projection="3d")
