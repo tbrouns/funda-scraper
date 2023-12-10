@@ -122,46 +122,49 @@ class FundaSpider(scrapy.Spider):
     def get_posting_date(self, response):
         date = "unknown"
         entry = self.get_entry(response, "Aangeboden sinds")
-        result = re.findall(r"\d+ [a-z]+ \d{4}", entry)
-        if len(result) > 0:
-            maanden = [
-                "januari",
-                "februari",
-                "maart",
-                "april",
-                "mei",
-                "juni",
-                "juli",
-                "augustus",
-                "september",
-                "oktober",
-                "november",
-                "december",
-            ]
-            result = result[0].split()
-            if len(result) == 3:
-                day, month, year = result
-                index = np.nonzero(np.array(maanden) == month)[0]
-                if len(index) > 0:
-                    month = index[0] + 1
-                    date = datetime(int(year), month, int(day))
-        else:
-            days_to_subtract = None
-            result = re.findall(r".+?(?= weken)", entry)
-            if len(result) == 1:
-                days_to_subtract = 7 * int(result[0])
+        if len(entry) > 0:
+            result = re.findall(r"\d+ [a-z]+ \d{4}", entry)
+            if len(result) > 0:
+                maanden = [
+                    "januari",
+                    "februari",
+                    "maart",
+                    "april",
+                    "mei",
+                    "juni",
+                    "juli",
+                    "augustus",
+                    "september",
+                    "oktober",
+                    "november",
+                    "december",
+                ]
+                result = result[0].split()
+                if len(result) == 3:
+                    day, month, year = result
+                    index = np.nonzero(np.array(maanden) == month)[0]
+                    if len(index) > 0:
+                        month = index[0] + 1
+                        date = datetime(int(year), month, int(day))
             else:
-                result = re.findall(r".+?(?= maanden)", entry)
+                days_to_subtract = None
+                result = re.findall(r".+?(?= weken)", entry)
                 if len(result) == 1:
-                    result = result[0]
-                    result = re.findall(r"\d", result)[0]
-                    days_to_subtract = 30 * int(result)
+                    days_to_subtract = 7 * int(result[0])
                 else:
-                    result = re.findall(r"Vandaag", entry)
+                    result = re.findall(r".+?(?= maanden)", entry)
                     if len(result) == 1:
-                        date = self.current_date
-            if days_to_subtract is not None:
-                date = self.current_date - timedelta(days=days_to_subtract)
+                        result = result[0]
+                        result = re.findall(r"\d", result)[0]
+                        days_to_subtract = 30 * int(result)
+                    else:
+                        result = re.findall(r"Vandaag", entry)
+                        if len(result) == 1:
+                            date = self.current_date
+                if days_to_subtract is not None:
+                    date = self.current_date - timedelta(days=days_to_subtract)
+        else:
+            date = self.current_date
         return date
 
     def get_year(self, string):
